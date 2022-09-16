@@ -70,7 +70,7 @@ function! jupyter_ascending#convert_all() abort
   let current_file_name = expand('%:t:r:r')
     silent execute '!for FILE in ' . dir_name . '/*.sync.ipynb; do if [ "$(basename "$FILE")" \!= "*.sync.ipynb" ] && [ "$(basename "$FILE")" \!= "*' . current_file . '*" ]; then echo "$FILE"; fi; done;'
     silent execute '!for FILE in ' . dir_name . '/*.ipynb; do if [ "$(basename "$FILE")" \!= "*.sync.ipynb" ] && [ "$(basename "$FILE")" \!= "*' . current_file . '*" ]; then mv "$FILE" ' . dir_name . '/$(basename "$FILE" .ipynb).sync.ipynb; fi; done;'
-    execute '!for FILE in ' . dir_name . '/*.sync.ipynb; do jupytext --to py:percent $FILE; done;'
+    silent execute '!for FILE in ' . dir_name . '/*.sync.ipynb; do jupytext --to py:percent $FILE; done;'
     silent execute '!if "' . current_file . '" \!= "*.sync.ipynb"; then mv ' . file_name . ' ' . dir_name . '/' . current_file_name . '.sync.ipynb && jupytext --to py:percent ' . dir_name . '/' . current_file_name . '.sync.ipynb; fi;'
     silent execute 'e ' dir_name . '/' . current_file_name . '.sync.py'
 endfunction
@@ -154,6 +154,7 @@ function! jupyter_ascending#del_all_synced_py() abort
     let dir_name = expand('%:p:h')
     let current_file = expand('%:t')
     let current_file_name = expand('%:t:r:r')
+    let base_name = expand('%:p:r:r')
 
     echo '!for FILE in ' . dir_name . '/*.sync.py; do if [ "$(basename "$FILE")" \!= "*' . current_file . '*" ]; then echo "$FILE" '
     echo
