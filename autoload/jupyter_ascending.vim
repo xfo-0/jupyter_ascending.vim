@@ -84,6 +84,7 @@ function! jupyter_ascending#make_pair() abort
   let input = input('')
   silent execute '!python -m jupyter_ascending.scripts.make_pair --base'
   silent execute 'e ' . './' . input . '.sync.py'
+endfunction
 
 function! jupyter_ascending#convert_current() abort
   let file_name = expand('%:p')
@@ -127,7 +128,6 @@ function! jupyter_ascending#restore_all() abort
     if current_file = ".sync.ipynb"
       silent execute 'e ' . './' . base_name . '.sync.py'
     endif
-
 endfunction
 
 function! jupyter_ascending#restore_current() abort
