@@ -101,7 +101,7 @@ function! jupyter_ascending#convert_current() abort
     echo file_name . ' -> ' . base_name . '.sync.ipynb'
 
     silent execute '!mv ' . file_name . ' ' . base_name . '.sync.ipynb'
-    execute '!jupytext --to py:percent ' . base_name . '.sync.ipynb'
+    silont execute '!jupytext --to py:percent ' . base_name . '.sync.ipynb'
     silent execute 'e ' . dir_name '/' . base_name . '.sync.py'
 
   elseif extension == "py"
@@ -122,11 +122,11 @@ function! jupyter_ascending#restore_all() abort
 
     echo 'Restoring: '
     echo
-    execute '!for FILE in ' . dir_name . '/*.sync.ipynb; do if [ "$(basename "$FILE")" \!= "*' . current_file . '*" ]; then echo "$FILE"; fi; done;'
+    silent execute '!for FILE in ' . dir_name . '/*.sync.ipynb; do if [ "$(basename "$FILE")" \!= "*' . current_file . '*" ]; then echo "$FILE"; fi; done;'
     silent execute '!for FILE in ' . dir_name . '/*.sync.ipynb; do if [ "$(basename "$FILE")" \!= "*' . current_file . '*" ]; then mv "$FILE" ' . dir_name . '/$(basename "$FILE" .sync.ipynb).ipynb; fi; done;'
     silent execute '!if "' . current_file . '" == "*.ipynb"; then mv ' . file_name . ' ' . dir_name . '/' . current_file_name . '.ipynb && ; fi;'
 
-    if current_file = ".sync.ipynb"
+    if current_file == ".sync.ipynb"
       silent execute 'e ' . dir_name '/' . base_name . '.sync.py'
     endif
 endfunction
@@ -170,7 +170,7 @@ function! jupyter_ascending#del_all_synced_py() abort
       echo
       echo 'Removing: '
       echo
-      echo '!for FILE in ' . dir_name . '/*.sync.py; do if [ "$(basename "$FILE")" \!= "*' . current_file . '*" ]; then echo "$FILE" '
+      " echo '!for FILE in ' . dir_name . '/*.sync.py; do if [ "$(basename "$FILE")" \!= "*' . current_file . '*" ]; then echo "$FILE" '
       silent execute '!for FILE in ' . dir_name . '/*.sync.py; do if [ "$(basename "$FILE")" \!= "*' . current_file . '*" ]; then rm "$FILE" ' . dir_name . '/"$FILE"; fi; done;'
       if current_file =~ ".sync.py"
         echo file_name
