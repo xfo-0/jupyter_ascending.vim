@@ -68,11 +68,7 @@ function! jupyter_ascending#convert_all() abort
   let file_name = expand('%:p')
   let current_file = expand('%:t')
   let current_file_name = expand('%:t:r:r')
-
-    echo 'Converting: '
-    echo
-    execute '!for FILE in ' . dir_name . '/*.sync.ipynb; do if [ "$(basename "$FILE")" \!= "*.sync.ipynb" ] && [ "$(basename "$FILE")" \!= "*' . current_file . '*" ]; then echo "$FILE"; fi; done;'
-
+    silent execute '!for FILE in ' . dir_name . '/*.sync.ipynb; do if [ "$(basename "$FILE")" \!= "*.sync.ipynb" ] && [ "$(basename "$FILE")" \!= "*' . current_file . '*" ]; then echo "$FILE"; fi; done;'
     silent execute '!for FILE in ' . dir_name . '/*.ipynb; do if [ "$(basename "$FILE")" \!= "*.sync.ipynb" ] && [ "$(basename "$FILE")" \!= "*' . current_file . '*" ]; then mv "$FILE" ' . dir_name . '/$(basename "$FILE" .ipynb).sync.ipynb; fi; done;'
     execute '!for FILE in ' . dir_name . '/*.sync.ipynb; do jupytext --to py:percent $FILE; done;'
     silent execute '!if "' . current_file . '" \!= "*.sync.ipynb"; then mv ' . file_name . ' ' . dir_name . '/' . current_file_name . '.sync.ipynb && jupytext --to py:percent ' . dir_name . '/' . current_file_name . '.sync.ipynb; fi;'
@@ -81,7 +77,6 @@ endfunction
 
 function! jupyter_ascending#make_pair() abort
   echo 'File basename:'
-  echo
   let input = input('')
   silent execute '!python -m jupyter_ascending.scripts.make_pair --base' . ' ' . input
   silent execute 'e ' . './' . input . '.sync.py'
@@ -101,7 +96,7 @@ function! jupyter_ascending#convert_current() abort
     echo file_name . ' -> ' . base_name . '.sync.ipynb'
 
     silent execute '!mv ' . file_name . ' ' . base_name . '.sync.ipynb'
-    silont execute '!jupytext --to py:percent ' . base_name . '.sync.ipynb'
+    silent execute '!jupytext --to py:percent ' . base_name . '.sync.ipynb'
     silent execute 'e ' . dir_name '/' . base_name . '.sync.py'
 
   elseif extension == "py"
@@ -120,8 +115,6 @@ function! jupyter_ascending#restore_all() abort
     let current_file = expand('%:t')
     let current_file_name = expand('%:t:r:r')
 
-    echo 'Restoring: '
-    echo
     silent execute '!for FILE in ' . dir_name . '/*.sync.ipynb; do if [ "$(basename "$FILE")" \!= "*' . current_file . '*" ]; then echo "$FILE"; fi; done;'
     silent execute '!for FILE in ' . dir_name . '/*.sync.ipynb; do if [ "$(basename "$FILE")" \!= "*' . current_file . '*" ]; then mv "$FILE" ' . dir_name . '/$(basename "$FILE" .sync.ipynb).ipynb; fi; done;'
     silent execute '!if "' . current_file . '" == "*.ipynb"; then mv ' . file_name . ' ' . dir_name . '/' . current_file_name . '.ipynb && ; fi;'
