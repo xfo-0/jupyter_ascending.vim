@@ -63,7 +63,7 @@ function! jupyter_ascending#execute_all() abort
   call s:execute(command_string)
 endfunction
 
-function! jupyter_ascending#convert_all() abort 
+function! jupyter_ascending#convert_all() abort
   let dir_name = expand('%:p:h')
   let file_name = expand('%:p')
   let current_file = expand('%:t')
@@ -76,9 +76,10 @@ function! jupyter_ascending#convert_all() abort
     silent execute '!for FILE in ' . dir_name . '/*.ipynb; do if [ "$(basename "$FILE")" \!= "*.sync.ipynb" ] && [ "$(basename "$FILE")" \!= "*' . current_file . '*" ]; then mv "$FILE" ' . dir_name . '/$(basename "$FILE" .ipynb).sync.ipynb; fi; done;'
     execute '!for FILE in ' . dir_name . '/*.sync.ipynb; do jupytext --to py:percent $FILE; done;'
     execute '!if "' . current_file . '" \!= "*.sync.ipynb"; then mv ' . file_name . ' ' . dir_name . '/' . current_file_name . '.sync.ipynb && jupytext --to py:percent ' . dir_name . '/' . current_file_name . '.sync.ipynb; fi;'
+    execute 'e ' dir_name . '/' . current_file_name . '.sync.py'
 endfunction
 
-function! jupyter_ascending#convert_current() abort 
+function! jupyter_ascending#convert_current() abort
   let file_name = expand('%:p')
   let extension = expand('%:e')
   let current_file = expand('%:t')
@@ -92,6 +93,7 @@ function! jupyter_ascending#convert_current() abort
 
     silent execute '!mv ' . file_name . ' ' . base_name . '.sync.ipynb'
     execute '!jupytext --to py:percent ' . base_name . '.sync.ipynb'
+    execute 'e ' . '/' . base_name . '.sync.py'
 
   elseif extension == "py"
     echo 'Converting: ' . current_file_name . '.sync.ipynb'
@@ -100,11 +102,12 @@ function! jupyter_ascending#convert_current() abort
 
     silent execute '!mv ' . base_name . '.ipynb' . ' ' . base_name . '.sync.ipynb'
     execute '!jupytext --to py:percent ' . base_name . '.sync.ipynb'
+    execute 'e ' . '/' . base_name . '.sync.py'
   endif
 endfunction
 
 function! jupyter_ascending#restore_all() abort
-    let dir_name = expand('%:p:h') 
+    let dir_name = expand('%:p:h')
     let file_name = expand('%:p')
     let current_file = expand('%:t')
     let current_file_name = expand('%:t:r:r')
@@ -114,9 +117,10 @@ function! jupyter_ascending#restore_all() abort
     execute '!for FILE in ' . dir_name . '/*.sync.ipynb; do if [ "$(basename "$FILE")" \!= "*' . current_file . '*" ]; then echo "$FILE"; fi; done;'
     silent execute '!for FILE in ' . dir_name . '/*.sync.ipynb; do if [ "$(basename "$FILE")" \!= "*' . current_file . '*" ]; then mv "$FILE" ' . dir_name . '/$(basename "$FILE" .sync.ipynb).ipynb; fi; done;'
     silent execute '!if "' . current_file . '" == "*.ipynb"; then mv ' . file_name . ' ' . dir_name . '/' . current_file_name . '.ipynb; fi;'
-endfunction 
+    execute 'e ' . '/' . current_file_name . '.py'
+endfunction
 
-function! jupyter_ascending#restore_current() abort 
+function! jupyter_ascending#restore_current() abort
   let file_name = expand('%:p')
   let extension = expand('%:e')
   let current_file = expand('%:t')
@@ -129,6 +133,7 @@ function! jupyter_ascending#restore_current() abort
     echo file_name . ' -> ' . base_name . '.ipynb'
 
     silent execute '!mv ' . file_name . ' ' . base_name '.ipynb'
+    execute 'e ' . '/' . base_name . '.ipynb'
 
   elseif extension == "py"
     echo 'Restoring: ' . current_file_name . '.sync.ipynb'
@@ -136,12 +141,13 @@ function! jupyter_ascending#restore_current() abort
     echo file_name . ' -> ' . base_name . '.ipynb'
 
     silent execute '!mv ' . base_name . '.sync.ipynb'. ' ' . base_name . '.ipynb'
+    execute 'e ' . '/' . base_name . '.py'
   endif
 endfunction
 
 function! jupyter_ascending#del_all_synced_py() abort
     let file_name = expand('%:p')
-    let dir_name = expand('%:p:h') 
+    let dir_name = expand('%:p:h')
     let current_file = expand('%:t')
     let current_file_name = expand('%:t:r:r')
 
@@ -156,8 +162,9 @@ function! jupyter_ascending#del_all_synced_py() abort
       echo '!for FILE in ' . dir_name . '/*.sync.py; do if [ "$(basename "$FILE")" \!= "*' . current_file . '*" ]; then echo "$FILE" '
       silent execute '!for FILE in ' . dir_name . '/*.sync.py; do if [ "$(basename "$FILE")" \!= "*' . current_file . '*" ]; then rm "$FILE" ' . dir_name . '/"$FILE"; fi; done;'
       if current_file =~ ".sync.py"
-        echo file_name 
+        echo file_name
       silent execute '!if "' . current_file . '" == "*.sync.py"; then rm ' . file_name . '; fi; done;'
+      execute 'e ' . '/' . base_name . '.ipynb'
       endif
     endif
-endfunction 
+endfunction
