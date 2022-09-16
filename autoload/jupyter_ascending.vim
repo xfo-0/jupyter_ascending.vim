@@ -75,8 +75,8 @@ function! jupyter_ascending#convert_all() abort
 
     silent execute '!for FILE in ' . dir_name . '/*.ipynb; do if [ "$(basename "$FILE")" \!= "*.sync.ipynb" ] && [ "$(basename "$FILE")" \!= "*' . current_file . '*" ]; then mv "$FILE" ' . dir_name . '/$(basename "$FILE" .ipynb).sync.ipynb; fi; done;'
     execute '!for FILE in ' . dir_name . '/*.sync.ipynb; do jupytext --to py:percent $FILE; done;'
-    execute '!if "' . current_file . '" \!= "*.sync.ipynb"; then mv ' . file_name . ' ' . dir_name . '/' . current_file_name . '.sync.ipynb && jupytext --to py:percent ' . dir_name . '/' . current_file_name . '.sync.ipynb; fi;'
-    execute 'e ' dir_name . '/' . current_file_name . '.sync.py'
+    silent execute '!if "' . current_file . '" \!= "*.sync.ipynb"; then mv ' . file_name . ' ' . dir_name . '/' . current_file_name . '.sync.ipynb && jupytext --to py:percent ' . dir_name . '/' . current_file_name . '.sync.ipynb; fi;'
+    silent execute 'e ' dir_name . '/' . current_file_name . '.sync.py'
 endfunction
 
 function! jupyter_ascending#make_pair() abort
@@ -110,7 +110,7 @@ function! jupyter_ascending#convert_current() abort
     echo file_name . ' -> ' . base_name . '.sync.ipynb'
 
     silent execute '!mv ' . base_name . '.ipynb' . ' ' . base_name . '.sync.ipynb'
-    execute '!jupytext --to py:percent ' . base_name . '.sync.ipynb'
+    silent execute '!jupytext --to py:percent ' . base_name . '.sync.ipynb'
   endif
 endfunction
 
