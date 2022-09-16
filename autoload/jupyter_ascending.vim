@@ -89,6 +89,7 @@ endfunction
 
 function! jupyter_ascending#convert_current() abort
   let file_name = expand('%:p')
+  let dir_name = expand('%:p:h')
   let extension = expand('%:e')
   let current_file = expand('%:t')
   let current_file_name = expand('%:t:r:r')
@@ -101,7 +102,7 @@ function! jupyter_ascending#convert_current() abort
 
     silent execute '!mv ' . file_name . ' ' . base_name . '.sync.ipynb'
     execute '!jupytext --to py:percent ' . base_name . '.sync.ipynb'
-    execute 'e ' . './' . base_name . '.sync.py'
+    silent execute 'e ' . dir_name '/' . base_name . '.sync.py'
 
   elseif extension == "py"
     echo 'Converting: ' . current_file_name . '.sync.ipynb'
@@ -110,13 +111,12 @@ function! jupyter_ascending#convert_current() abort
 
     silent execute '!mv ' . base_name . '.ipynb' . ' ' . base_name . '.sync.ipynb'
     execute '!jupytext --to py:percent ' . base_name . '.sync.ipynb'
-    execute 'e ' . './' . base_name . '.sync.py'
   endif
 endfunction
 
 function! jupyter_ascending#restore_all() abort
-    let dir_name = expand('%:p:h')
     let file_name = expand('%:p')
+    let dir_name = expand('%:p:h')
     let current_file = expand('%:t')
     let current_file_name = expand('%:t:r:r')
 
@@ -127,12 +127,13 @@ function! jupyter_ascending#restore_all() abort
     silent execute '!if "' . current_file . '" == "*.ipynb"; then mv ' . file_name . ' ' . dir_name . '/' . current_file_name . '.ipynb && ; fi;'
 
     if current_file = ".sync.ipynb"
-      silent execute 'e ' . './' . base_name . '.sync.py'
+      silent execute 'e ' . dir_name '/' . base_name . '.sync.py'
     endif
 endfunction
 
 function! jupyter_ascending#restore_current() abort
   let file_name = expand('%:p')
+  let dir_name = expand('%:p:h')
   let extension = expand('%:e')
   let current_file = expand('%:t')
   let current_file_name = expand('%:t:r:r')
@@ -144,7 +145,7 @@ function! jupyter_ascending#restore_current() abort
     echo file_name . ' -> ' . base_name . '.ipynb'
 
     silent execute '!mv ' . file_name . ' ' . base_name '.ipynb'
-    silent execute 'e ' . './' . base_name . '.sync.py'
+    silent execute 'e ' . dir_name '/' . base_name . '.sync.py'
 
   elseif extension == "py"
     echo 'Restoring: ' . current_file_name . '.sync.ipynb'
@@ -174,7 +175,7 @@ function! jupyter_ascending#del_all_synced_py() abort
       if current_file =~ ".sync.py"
         echo file_name
       silent execute '!if "' . current_file . '" == "*.sync.py"; then rm ' . file_name . '; fi; done;'
-      execute 'e ' . './' . base_name . '.ipynb'
+      silent execute 'e ' . dir_name '/' . base_name . '.ipynb'
       endif
     endif
 endfunction
