@@ -116,8 +116,12 @@ function! jupyter_ascending#restore_all() abort
     echo
     execute '!for FILE in ' . dir_name . '/*.sync.ipynb; do if [ "$(basename "$FILE")" \!= "*' . current_file . '*" ]; then echo "$FILE"; fi; done;'
     silent execute '!for FILE in ' . dir_name . '/*.sync.ipynb; do if [ "$(basename "$FILE")" \!= "*' . current_file . '*" ]; then mv "$FILE" ' . dir_name . '/$(basename "$FILE" .sync.ipynb).ipynb; fi; done;'
-    silent execute '!if "' . current_file . '" == "*.ipynb"; then mv ' . file_name . ' ' . dir_name . '/' . current_file_name . '.ipynb; fi;'
-    execute 'e ' . './' . current_file_name . '.py'
+    silent execute '!if "' . current_file . '" == "*.ipynb"; then mv ' . file_name . ' ' . dir_name . '/' . current_file_name . '.ipynb && ; fi;'
+
+    if current_file = ".sync.ipynb"
+      silent execute 'e ' . './' . base_name . '.sync.py'
+    endif
+
 endfunction
 
 function! jupyter_ascending#restore_current() abort
@@ -133,7 +137,7 @@ function! jupyter_ascending#restore_current() abort
     echo file_name . ' -> ' . base_name . '.ipynb'
 
     silent execute '!mv ' . file_name . ' ' . base_name '.ipynb'
-    execute 'e ' . './' . base_name . '.ipynb'
+    silent execute 'e ' . './' . base_name . '.sync.py'
 
   elseif extension == "py"
     echo 'Restoring: ' . current_file_name . '.sync.ipynb'
@@ -141,7 +145,6 @@ function! jupyter_ascending#restore_current() abort
     echo file_name . ' -> ' . base_name . '.ipynb'
 
     silent execute '!mv ' . base_name . '.sync.ipynb'. ' ' . base_name . '.ipynb'
-    execute 'e ' . './' . base_name . '.py'
   endif
 endfunction
 
