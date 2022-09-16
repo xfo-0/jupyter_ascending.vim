@@ -79,6 +79,12 @@ function! jupyter_ascending#convert_all() abort
     execute 'e ' dir_name . '/' . current_file_name . '.sync.py'
 endfunction
 
+function! jupyter_ascending#make_pair() abort
+  echo 'File basename:'
+  let input = input('')
+  silent execute '!python -m jupyter_ascending.scripts.make_pair --base'
+  silent execute 'e ' . './' . input . '.sync.py'
+
 function! jupyter_ascending#convert_current() abort
   let file_name = expand('%:p')
   let extension = expand('%:e')
