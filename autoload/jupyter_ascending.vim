@@ -81,8 +81,9 @@ endfunction
 
 function! jupyter_ascending#make_pair() abort
   echo 'File basename:'
+  echo
   let input = input('')
-  silent execute '!python -m jupyter_ascending.scripts.make_pair --base'
+  silent execute '!python -m jupyter_ascending.scripts.make_pair --base' . ' ' . input
   silent execute 'e ' . './' . input . '.sync.py'
 endfunction
 
